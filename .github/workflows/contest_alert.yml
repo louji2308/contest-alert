@@ -1,0 +1,31 @@
+name: Contest Alert System
+
+on:
+  schedule:
+    - cron: '0,30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  check-and-alert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install required libraries
+        run: pip install requests pytz
+
+      - name: Run contest alert script
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+          CLIST_USERNAME: ${{ secrets.CLIST_USERNAME }}
+          CLIST_API_KEY: ${{ secrets.CLIST_API_KEY }}
+        run: python contest_alert.py
